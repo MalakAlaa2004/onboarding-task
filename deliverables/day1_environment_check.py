@@ -10,14 +10,10 @@ import sys
 
 def check_tool(name: str, cmd: list[str]) -> dict:
     try:
-        result = subprocess.run(
-            cmd, capture_output=True, text=True, check=False
-        )
+        result = subprocess.run(cmd, capture_output=True, text=True, check=False)
         if result.returncode == 0:
             version_str = (
-                result.stdout.strip().splitlines()[0]
-                if result.stdout
-                else "Available"
+                result.stdout.strip().splitlines()[0] if result.stdout else "Available"
             )
             return {"installed": True, "details": version_str}
     except Exception as e:
@@ -53,7 +49,9 @@ def main():
     if results["Docker"]["installed"]:
         print("[SUCCESS] Core runtime environment ready.")
     else:
-        print("[NOTICE] Next Step: Install Docker Desktop to run MongoDB/Redis containers locally.")
+        print(
+            "[NOTICE] Next Step: Install Docker Desktop to run MongoDB/Redis containers locally."
+        )
     print("=" * 60)
 
 

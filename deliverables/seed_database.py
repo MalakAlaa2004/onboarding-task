@@ -8,9 +8,9 @@ from __future__ import annotations
 
 import json
 import logging
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 from typing import Any
 
 # Configure structured logging
@@ -134,7 +134,7 @@ def main() -> int:
         return 1
 
     try:
-        with open(seed_file, "r", encoding="utf-8") as f:
+        with open(seed_file, encoding="utf-8") as f:
             data = json.load(f)
 
         validate_seed_data(data)

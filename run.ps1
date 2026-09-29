@@ -12,7 +12,7 @@
 
 param (
     [Parameter(Position = 0, Mandatory = $true)]
-    [ValidateSet("up", "down", "restart", "status", "logs", "seed", "verify", "lint", "format", "check-env")]
+    [ValidateSet("up", "down", "restart", "status", "logs", "seed", "verify", "lint", "format", "check-env", "test", "dev")]
     [string]$Command
 )
 
@@ -48,21 +48,29 @@ switch ($Command) {
     }
     "seed" {
         Write-Host "--> Seeding local MongoDB with portfolio dataset..." -ForegroundColor Cyan
-        python deliverables/seed_database.py
+        .\.venv\Scripts\python deliverables/seed_database.py
     }
     "verify" {
         Write-Host "--> Running end-to-end infrastructure smoke test..." -ForegroundColor Cyan
-        python deliverables/verify_all.py
+        .\.venv\Scripts\python deliverables/verify_all.py
     }
     "check-env" {
-        python deliverables/day1_environment_check.py
+        .\.venv\Scripts\python deliverables/day1_environment_check.py
     }
     "lint" {
         Write-Host "--> Running Ruff linter..." -ForegroundColor Cyan
-        python -m uv run ruff check .
+        .\.venv\Scripts\ruff check .
     }
     "format" {
         Write-Host "--> Running Ruff code formatter..." -ForegroundColor Cyan
-        python -m uv run ruff format .
+        .\.venv\Scripts\ruff format .
+    }
+    "test" {
+        Write-Host "--> Running automated pytest test suite..." -ForegroundColor Cyan
+        .\.venv\Scripts\pytest -v
+    }
+    "dev" {
+        Write-Host "--> Starting FastAPI development server on http://localhost:8000 (Docs: /docs)..." -ForegroundColor Green
+        .\.venv\Scripts\uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
     }
 }

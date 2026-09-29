@@ -1,4 +1,4 @@
-.PHONY: help up down restart status logs seed verify check-env lint format
+.PHONY: help up down restart status logs seed verify check-env lint format test dev
 
 help:
 	@echo "NovaGates Developer Commands:"
@@ -12,6 +12,8 @@ help:
 	@echo "  make check-env  - Validate local environment tools"
 	@echo "  make lint       - Run Ruff linter"
 	@echo "  make format     - Run Ruff code formatter"
+	@echo "  make test       - Run automated pytest test suite"
+	@echo "  make dev        - Start local FastAPI server on :8000"
 
 up:
 	docker compose up -d
@@ -40,7 +42,13 @@ check-env:
 	python deliverables/day1_environment_check.py
 
 lint:
-	python -m uv run ruff check .
+	.\.venv\Scripts\ruff check .
 
 format:
-	python -m uv run ruff format .
+	.\.venv\Scripts\ruff format .
+
+test:
+	.\.venv\Scripts\pytest -v
+
+dev:
+	.\.venv\Scripts\uvicorn app.main:app --reload --host 0.0.0.0 --port 8000

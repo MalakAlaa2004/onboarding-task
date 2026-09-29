@@ -73,6 +73,15 @@ d:/Work-orientation/
 ├── .vscode/                     # Team-standard IDE configurations
 │   ├── extensions.json          # Recommended VS Code plugins
 │   └── settings.json            # Auto-formatting (Ruff / Black)
+├── app/                         # Production FastAPI + Beanie Layered Architecture
+│   ├── api/v1/                  # Routers: /skills, /projects, /experiences, /jobs, /ai, /health
+│   ├── core/                    # Config (pydantic-settings), db_init, cache, exceptions
+│   ├── models/                  # Beanie Document models (Project, Skill, Experience)
+│   ├── repositories/            # Generic BaseRepository & Domain Repositories
+│   ├── schemas/                 # Pydantic v2 Request & Response models
+│   ├── services/                # Business logic, Redis caching, Ollama Cloud & Tavily
+│   └── main.py                  # Lifespan application factory
+├── tests/                       # Automated pytest suite (HTTPX async test client)
 ├── deliverables/                # Curriculum deliverables & milestones
 │   ├── day1_environment_check.py# Environment diagnostic script
 │   ├── sample_seed_data.json    # Reference domain dataset
@@ -96,9 +105,9 @@ d:/Work-orientation/
 - [x] **Day 1: Setup & Onboarding** — Tooling validated (Python, `uv`, Git, Docker Desktop).
 - [x] **Day 2–3: MongoDB Foundations** — CRUD, filtering, compound indexing, query plans (`explain`), multi-stage aggregations (`$lookup`, `$unwind`), text search, and Atlas vector search.
 - [x] **Day 4–5: Redis & Caching** — CLI patterns, TTL invalidation, Cache-Aside pattern, and distributed locking.
-- [ ] **Day 5–6: Seed Project Scaffold & Core Logic** — FastAPI layered architecture with Beanie ODM and Redis cache.
-- [ ] **Day 6–7: Celery & Tavily Job Retrieval** — Scheduled recurring task with API trigger.
-- [ ] **Day 7: Full Stack Containerisation** — Multi-stage Dockerfile and Docker Compose orchestration.
+- [x] **Day 5–6: Seed Project Scaffold & Core Logic** — FastAPI layered architecture with Beanie ODM, Redis cache, Tavily job search, and Ollama Cloud integration.
+- [ ] **Day 6–7: Celery & Tavily Job Retrieval Worker** — Background Celery worker process.
+- [ ] **Day 7: Full Stack Containerisation** — Multi-stage Dockerfile and full stack compose.
 - [ ] **Day 8–10: LangGraph Portfolio Agent** — Conversational agent with state, memory, and backend tool calling.
 
 ---

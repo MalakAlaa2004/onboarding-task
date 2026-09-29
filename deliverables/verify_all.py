@@ -11,7 +11,7 @@ import logging
 import subprocess
 import sys
 import time
-from typing import Callable
+from collections.abc import Callable
 
 logging.basicConfig(
     level=logging.INFO,
@@ -84,9 +84,16 @@ def test_mongodb_connection() -> str:
 
 def test_mongodb_indexes() -> str:
     script = "JSON.stringify(db.projects.getIndexes().map(i => i.name));"
-    res = exec_docker(["novagates-mongodb", "mongosh", "portfolio_db", "--quiet", "--eval", script])
+    res = exec_docker(
+        ["novagates-mongodb", "mongosh", "portfolio_db", "--quiet", "--eval", script]
+    )
     indexes = json.loads(res)
-    expected = {"_id_", "uniq_project_slug", "idx_projects_status_stars", "idx_projects_fulltext"}
+    expected = {
+        "_id_",
+        "uniq_project_slug",
+        "idx_projects_status_stars",
+        "idx_projects_fulltext",
+    }
     if not expected.issubset(set(indexes)):
         raise AssertionError(f"Missing required indexes. Found: {indexes}")
     return f"Verified indexes: {indexes}"
@@ -101,7 +108,9 @@ def test_mongodb_aggregation() -> str:
     ]).toArray();
     print(JSON.stringify(res));
     """
-    res = exec_docker(["novagates-mongodb", "mongosh", "portfolio_db", "--quiet", "--eval", script])
+    res = exec_docker(
+        ["novagates-mongodb", "mongosh", "portfolio_db", "--quiet", "--eval", script]
+    )
     docs = json.loads(res)
     if len(docs) < 2:
         raise AssertionError(f"Expected at least 2 featured projects, got {len(docs)}")
@@ -118,7 +127,9 @@ def test_mongodb_text_search() -> str:
     ).sort({ score: { $meta: "textScore" } }).toArray();
     print(JSON.stringify(res));
     """
-    res = exec_docker(["novagates-mongodb", "mongosh", "portfolio_db", "--quiet", "--eval", script])
+    res = exec_docker(
+        ["novagates-mongodb", "mongosh", "portfolio_db", "--quiet", "--eval", script]
+    )
     docs = json.loads(res)
     if not docs:
         raise AssertionError("Text search failed to return matching projects")
@@ -126,7 +137,17 @@ def test_mongodb_text_search() -> str:
 
 
 def test_redis_strings_ttl() -> str:
-    exec_docker(["novagates-redis", "redis-cli", "SET", "test:key", "senior-dev-val", "EX", "30"])
+    exec_docker(
+        [
+            "novagates-redis",
+            "redis-cli",
+            "SET",
+            "test:key",
+            "senior-dev-val",
+            "EX",
+            "30",
+        ]
+    )
     val = exec_docker(["novagates-redis", "redis-cli", "GET", "test:key"])
     ttl = int(exec_docker(["novagates-redis", "redis-cli", "TTL", "test:key"]))
     if val != "senior-dev-val" or ttl <= 0 or ttl > 30:
@@ -137,7 +158,9 @@ def test_redis_strings_ttl() -> str:
 def test_redis_queue_semantics() -> str:
     queue = "test:work:queue"
     exec_docker(["novagates-redis", "redis-cli", "DEL", queue])
-    exec_docker(["novagates-redis", "redis-cli", "RPUSH", queue, "job_1", "job_2", "job_3"])
+    exec_docker(
+        ["novagates-redis", "redis-cli", "RPUSH", queue, "job_1", "job_2", "job_3"]
+    )
     length = int(exec_docker(["novagates-redis", "redis-cli", "LLEN", queue]))
     popped = exec_docker(["novagates-redis", "redis-cli", "LPOP", queue])
     if length != 3 or popped != "job_1":
@@ -148,7 +171,18 @@ def test_redis_queue_semantics() -> str:
 def test_redis_hashes() -> str:
     hash_key = "test:cache:project:11"
     exec_docker(["novagates-redis", "redis-cli", "DEL", hash_key])
-    exec_docker(["novagates-redis", "redis-cli", "HSET", hash_key, "slug", "smart-job-matcher", "views", "120"])
+    exec_docker(
+        [
+            "novagates-redis",
+            "redis-cli",
+            "HSET",
+            hash_key,
+            "slug",
+            "smart-job-matcher",
+            "views",
+            "120",
+        ]
+    )
     slug = exec_docker(["novagates-redis", "redis-cli", "HGET", hash_key, "slug"])
     if slug != "smart-job-matcher":
         raise AssertionError(f"Hash get returned: {slug}")

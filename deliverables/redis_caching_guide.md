@@ -163,8 +163,11 @@ import json
 from typing import Any, Callable
 import redis.asyncio as aioredis
 
+
 class CacheService:
-    def __init__(self, redis_url: str = "redis://localhost:6379/0", default_ttl: int = 300) -> None:
+    def __init__(
+        self, redis_url: str = "redis://localhost:6379/0", default_ttl: int = 300
+    ) -> None:
         self.pool = aioredis.ConnectionPool.from_url(
             redis_url,
             max_connections=20,
