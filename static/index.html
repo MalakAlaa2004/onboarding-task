@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaGates Portfolio & AI Client Portal</title>
+  <meta name="description" content="Production-ready Backend & AI Developer Portfolio, LangGraph Agent, and System Portal.">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="nav-container">
+      <div class="brand-wrapper">
+        <div class="brand-badge">NG</div>
+        <div>
+          <h1 class="brand-title">NovaGates Portfolio</h1>
+          <div class="brand-subtitle">Backend & AI Developer Platform</div>
+        </div>
+      </div>
+
+      <nav class="nav-tabs" role="tablist">
+        <button id="tab-chat" class="tab-btn active" data-target="chat-view" role="tab">
+          <span>💬</span> AI Assistant
+        </button>
+        <button id="tab-projects" class="tab-btn" data-target="projects-view" role="tab">
+          <span>💼</span> Projects
+        </button>
+        <button id="tab-skills" class="tab-btn" data-target="skills-view" role="tab">
+          <span>⚡</span> Skills & Experience
+        </button>
+        <button id="tab-jobs" class="tab-btn" data-target="jobs-view" role="tab">
+          <span>🎯</span> Job Matcher
+        </button>
+      </nav>
+
+      <div class="system-status" id="system-status-indicator">
+        <span class="status-dot"></span>
+        <span>Checking Infrastructure...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main View Sections -->
+  <main>
+
+    <!-- 1. AI Assistant Chat View (LangGraph Stateful Agent) -->
+    <section id="chat-view" class="view-section active">
+      <div class="chat-container">
+        <!-- Sidebar -->
+        <aside class="chat-sidebar">
+          <div class="glass-card agent-profile">
+            <div class="agent-avatar">🤖</div>
+            <h2 class="agent-name">Portfolio AI Bot</h2>
+            <div class="agent-model-tag">LangGraph · Stateful Memory</div>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:12px;">
+              Connected directly to MongoDB. Ask me anything about the developer's projects, technical stack, or background.
+            </p>
+          </div>
+
+          <div class="glass-card quick-prompts">
+            <h4>Quick Inquiries</h4>
+            <button class="prompt-chip" data-prompt="What featured projects has this developer built and what are their tech stacks?">
+              🚀 Featured Projects
+            </button>
+            <button class="prompt-chip" data-prompt="What are the developer's core backend and database proficiencies?">
+              🛠️ Skills & Experience
+            </button>
+            <button class="prompt-chip" data-prompt="Show me how Redis and MongoDB are used in this portfolio platform.">
+              💾 Database & Caching Architecture
+            </button>
+            <button class="prompt-chip" data-prompt="Summarize the work history and past company roles.">
+              📜 Work History
+            </button>
+          </div>
+
+          <div class="glass-card" style="font-size:0.8rem; color:var(--text-dim);">
+            <strong>Developer Note:</strong> Multi-turn conversations persist across questions via LangGraph's <code style="color:var(--accent-cyan);">MemorySaver</code>.
+          </div>
+        </aside>
+
+        <!-- Main Chat Box -->
+        <div class="chat-main">
+          <div class="chat-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="status-dot"></span>
+              <span style="font-weight:600; font-size:0.95rem;">Interactive Session</span>
+            </div>
+            <a href="/docs" target="_blank" rel="noopener" class="job-link" style="font-size:0.8rem;">
+              Swagger UI Docs ↗
+            </a>
+          </div>
+
+          <div id="chat-messages" class="chat-messages">
+            <div class="chat-bubble agent">
+              Hello! I am the <strong>NovaGates Portfolio AI Agent</strong>. I can query our backend database in real time to tell you about the candidate's skills, projects, and career milestones. How can I assist you today?
+            </div>
+          </div>
+
+          <form id="chat-form" class="chat-input-bar">
+            <input 
+              type="text" 
+              id="chat-input" 
+              class="chat-input" 
+              placeholder="Ask about projects, skills, or experience..." 
+              autocomplete="off"
+              required
+            >
+            <button type="submit" id="send-btn" class="btn-primary">
+              <span>Send</span>
+              <span>➤</span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Projects Showcase View -->
+    <section id="projects-view" class="view-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Projects Showcase</h2>
+          <p class="section-desc">Live project catalog queried from MongoDB with caching via Redis.</p>
+        </div>
+        <div class="search-filter-box">
+          <input 
+            type="text" 
+            id="project-search" 
+            class="chat-input" 
+            placeholder="Search projects by keyword..." 
+            style="min-width: 280px;"
+          >
+        </div>
+      </div>
+
+      <div id="projects-container" class="grid-3">
+        <!-- Dynamically loaded via app.js -->
+      </div>
+    </section>
+
+    <!-- 3. Skills Matrix & Timeline View -->
+    <section id="skills-view" class="view-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Technical Capabilities</h2>
+          <p class="section-desc">Proficiency ratings and verified production technologies.</p>
+        </div>
+      </div>
+
+      <div id="skills-container" class="skills-grid" style="margin-bottom: 3rem;">
+        <!-- Dynamically loaded via app.js -->
+      </div>
+
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Career Milestones</h2>
+          <p class="section-desc">Professional journey and demonstrated technical achievements.</p>
+        </div>
+      </div>
+
+      <div id="experience-container" class="timeline-list">
+        <!-- Dynamically loaded via app.js -->
+      </div>
+    </section>
+
+    <!-- 4. Job Matcher & Celery Worker View -->
+    <section id="jobs-view" class="view-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Live Job Matcher & Queue</h2>
+          <p class="section-desc">
+            Asynchronous background workers querying live tech opportunities matching portfolio skills using Tavily Search API.
+          </p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button id="trigger-match-btn" class="btn-primary">
+            🔍 Search Live Jobs
+          </button>
+          <button id="trigger-celery-btn" class="btn-primary" style="background:linear-gradient(135deg, #10b981, #059669);">
+            ⚡ Queue to Celery (2h Worker)
+          </button>
+        </div>
+      </div>
+
+      <div id="jobs-results-container">
+        <div class="glass-card" style="text-align:center; padding: 3rem; color:var(--text-muted);">
+          Click <strong>"Search Live Jobs"</strong> to fetch relevant remote opportunities dynamically matched against your top portfolio skills.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

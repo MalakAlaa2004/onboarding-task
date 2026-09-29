@@ -83,9 +83,25 @@ def create_application() -> FastAPI:
     # Routers
     app.include_router(api_router, prefix=settings.API_V1_STR)
 
-    @app.get("/", include_in_schema=False)
-    async def root_redirect():
-        return RedirectResponse(url="/docs")
+    # Static Files & Client UI Portal
+    from pathlib import Path
+
+    from fastapi.responses import FileResponse
+    from fastapi.staticfiles import StaticFiles
+
+    static_dir = Path(__file__).resolve().parent.parent / "static"
+    if static_dir.exists():
+        app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+        @app.get("/", include_in_schema=False)
+        @app.get("/client", include_in_schema=False)
+        async def serve_client_portal():
+            return FileResponse(str(static_dir / "index.html"))
+    else:
+
+        @app.get("/", include_in_schema=False)
+        async def root_redirect():
+            return RedirectResponse(url="/docs")
 
     return app
 
