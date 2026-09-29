@@ -13,4 +13,4 @@ async def test_job_match_unconfigured_key_returns_graceful_error(
     assert res.status_code == 502
     data = res.json()
     assert data["code"] == "EXTERNAL_SERVICE_ERROR"
-    assert "TAVILY_API_KEY" in data["detail"]
+    assert "Tavily" in data["detail"]

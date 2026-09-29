@@ -31,3 +31,22 @@ async def match_jobs(
         data=result,
         message="Retrieved matching live job postings.",
     )
+
+
+@router.post(
+    "/sync-task",
+    summary="Trigger asynchronous background Tavily job search via Celery",
+)
+async def trigger_job_sync_task(request: JobMatchRequest | None = None):
+    from app.tasks.job_tasks import fetch_matching_jobs_task
+
+    query = request.query if request else None
+    max_results = request.max_results if request else 5
+
+    task = fetch_matching_jobs_task.delay(query=query, max_results=max_results)
+    return {
+        "success": True,
+        "task_id": task.id,
+        "status": "QUEUED",
+        "message": "Background job matching task dispatched to Celery worker queue.",
+    }

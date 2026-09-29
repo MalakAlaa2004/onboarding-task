@@ -106,9 +106,27 @@ d:/Work-orientation/
 - [x] **Day 2–3: MongoDB Foundations** — CRUD, filtering, compound indexing, query plans (`explain`), multi-stage aggregations (`$lookup`, `$unwind`), text search, and Atlas vector search.
 - [x] **Day 4–5: Redis & Caching** — CLI patterns, TTL invalidation, Cache-Aside pattern, and distributed locking.
 - [x] **Day 5–6: Seed Project Scaffold & Core Logic** — FastAPI layered architecture with Beanie ODM, Redis cache, Tavily job search, and Ollama Cloud integration.
-- [ ] **Day 6–7: Celery & Tavily Job Retrieval Worker** — Background Celery worker process.
-- [ ] **Day 7: Full Stack Containerisation** — Multi-stage Dockerfile and full stack compose.
-- [ ] **Day 8–10: LangGraph Portfolio Agent** — Conversational agent with state, memory, and backend tool calling.
+- [x] **Day 6–7: Celery & Tavily Job Retrieval Worker** — Background Celery worker process with 2-hour periodic Beat scheduler & API trigger (`POST /api/v1/jobs/sync-task`).
+- [x] **Day 7: Full Stack Containerisation** — Multi-stage Dockerfile and full stack compose orchestrating `api`, `mongodb`, `redis`, `celery_worker`, and `celery_beat`.
+- [x] **Day 8–10: LangGraph Portfolio Agent** — Conversational agent with stateful `MemorySaver` checkpointer, tool calling, and FastAPI endpoint (`POST /api/v1/agent/chat`).
+
+---
+
+## 📡 Live API Endpoints Reference
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/docs` | Interactive Swagger UI API documentation |
+| `GET` | `/api/v1/health` | Liveness probe returning service metadata |
+| `GET` | `/api/v1/health/ready` | Readiness probe verifying MongoDB & Redis connections |
+| `GET` | `/api/v1/skills` | List all skills (Redis cached, $O(1)$ response time) |
+| `POST`| `/api/v1/skills` | Create a new skill (automatically invalidates cache) |
+| `GET` | `/api/v1/projects` | List projects (supports `?featured=true` and `?q=search`) |
+| `GET` | `/api/v1/projects/{id}/detail` | Project detail with dynamically populated referenced skills |
+| `POST`| `/api/v1/jobs/match` | Direct live job search via Tavily matching top skills |
+| `POST`| `/api/v1/jobs/sync-task` | Dispatch asynchronous 2-hour job sync to Celery worker |
+| `POST`| `/api/v1/ai/bio` | Real executive developer pitch generated via Ollama Cloud |
+| `POST`| `/api/v1/agent/chat` | Stateful conversational LangGraph bot with MongoDB tool calling |
 
 ---
 
