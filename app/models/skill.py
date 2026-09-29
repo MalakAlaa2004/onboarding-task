@@ -18,6 +18,7 @@ class Skill(BaseDocument):
         indexes = [
             IndexModel([("name", 1)], unique=True, name="uniq_skill_name"),
             IndexModel(
-                [("category", 1), ("proficiency", -1)], name="idx_skill_cat_prof"
+                [("category", 1), ("proficiency", -1)],
+                name="idx_skills_category_proficiency",
             ),
         ]
