@@ -1,4 +1,4 @@
-// NovaGates Client / End-User Portal JavaScript Application
+// NovaGates Client Portal Application
 
 const API_BASE = "/api/v1";
 let currentThreadId = "session_" + Math.random().toString(36).substring(2, 9);
@@ -40,30 +40,29 @@ async function checkSystemHealth() {
     if (data.ready) {
       statusEl.innerHTML = `
         <span class="status-dot"></span>
-        <span>Systems Live: MongoDB & Redis Connected</span>
+        <span>Infrastructure: MongoDB & Redis Active</span>
       `;
     } else {
       statusEl.innerHTML = `
         <span class="status-dot" style="background:#f59e0b; box-shadow:0 0 10px #f59e0b;"></span>
-        <span>Database Initializing...</span>
+        <span>Services Initializing...</span>
       `;
     }
   } catch (err) {
     statusEl.innerHTML = `
       <span class="status-dot" style="background:#f43f5e; box-shadow:0 0 10px #f43f5e;"></span>
-      <span>API Offline</span>
+      <span>API Unreachable</span>
     `;
   }
 }
 
-// LangGraph AI Assistant Chat
+// LangGraph Assistant Chat
 function initChat() {
   const chatForm = document.getElementById("chat-form");
   const chatInput = document.getElementById("chat-input");
   const messagesBox = document.getElementById("chat-messages");
   const sendBtn = document.getElementById("send-btn");
 
-  // Quick Prompt Chips
   document.querySelectorAll(".prompt-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       chatInput.value = chip.dataset.prompt;
@@ -76,12 +75,10 @@ function initChat() {
     const query = chatInput.value.trim();
     if (!query) return;
 
-    // Append user message
     appendMessage(query, "user");
     chatInput.value = "";
     sendBtn.disabled = true;
 
-    // Temporary thinking bubble
     const thinkingId = "thinking_" + Date.now();
     appendThinkingBubble(thinkingId);
 
@@ -98,7 +95,7 @@ function initChat() {
       removeThinkingBubble(thinkingId);
 
       if (!res.ok) {
-        throw new Error(`Server returned ${res.status}`);
+        throw new Error(`Server returned status ${res.status}`);
       }
 
       const json = await res.json();
@@ -108,7 +105,7 @@ function initChat() {
       appendMessage(reply, "agent", tools);
     } catch (err) {
       removeThinkingBubble(thinkingId);
-      appendMessage("Sorry, I encountered an error connecting to the agent backend.", "agent");
+      appendMessage("An error occurred while connecting to the assistant backend.", "agent");
     } finally {
       sendBtn.disabled = false;
       chatInput.focus();
@@ -119,12 +116,10 @@ function initChat() {
     const bubble = document.createElement("div");
     bubble.className = `chat-bubble ${role}`;
 
-    // Format newlines
     let html = text.replace(/\n/g, "<br>");
     
-    // Add tools badge if agent called tools
     if (tools && tools.length > 0) {
-      const toolTags = tools.map(t => `<span class="tool-badge">🔧 ${t}</span>`).join(" ");
+      const toolTags = tools.map(t => `<span class="tool-badge">tool: ${t}</span>`).join(" ");
       html += `<div class="tool-badge-container">${toolTags}</div>`;
     }
 
@@ -139,7 +134,7 @@ function initChat() {
     bubble.className = "chat-bubble agent";
     bubble.style.fontStyle = "italic";
     bubble.style.color = "var(--text-dim)";
-    bubble.innerHTML = `<span>Thinking & querying portfolio tools...</span>`;
+    bubble.innerHTML = `<span>Querying portfolio database...</span>`;
     messagesBox.appendChild(bubble);
     messagesBox.scrollTop = messagesBox.scrollHeight;
   }
@@ -153,7 +148,7 @@ function initChat() {
 // Projects Showcase
 async function loadProjects(searchQuery = "") {
   const container = document.getElementById("projects-container");
-  container.innerHTML = `<div style="color:var(--text-dim);">Loading projects from MongoDB...</div>`;
+  container.innerHTML = `<div style="color:var(--text-dim);">Loading project records...</div>`;
 
   try {
     let url = `${API_BASE}/projects`;
@@ -164,7 +159,7 @@ async function loadProjects(searchQuery = "") {
     const projects = json.data;
 
     if (!projects || projects.length === 0) {
-      container.innerHTML = `<div style="color:var(--text-muted);">No projects found matching query.</div>`;
+      container.innerHTML = `<div style="color:var(--text-muted);">No projects found matching the filter.</div>`;
       return;
     }
 
@@ -174,7 +169,7 @@ async function loadProjects(searchQuery = "") {
           <span class="status-badge ${p.status === 'completed' ? 'status-completed' : 'status-in-progress'}">
             ${p.status}
           </span>
-          <span class="stars-counter">⭐ ${p.stars || 0}</span>
+          <span class="stars-counter">Score: ${p.stars || 0}</span>
         </div>
         <h3 class="project-title">${p.title}</h3>
         <p class="project-summary">${p.summary}</p>
@@ -249,7 +244,7 @@ async function loadExperience() {
               <h3 style="font-size:1.15rem; font-weight:700;">${exp.role}</h3>
               <div style="color:var(--accent-cyan); font-weight:500; font-size:0.95rem;">${exp.company}</div>
             </div>
-            <span class="tag-badge">${exp.start_date} → ${exp.is_current ? 'Present' : (exp.end_date || '')}</span>
+            <span class="tag-badge">${exp.start_date} &rarr; ${exp.is_current ? 'Present' : (exp.end_date || '')}</span>
           </div>
           <ul style="margin: 0.75rem 0 0.75rem 1.25rem; font-size:0.9rem; color:var(--text-muted);">
             ${(exp.responsibilities || []).map(r => `<li>${r}</li>`).join("")}
@@ -265,16 +260,17 @@ async function loadExperience() {
   }
 }
 
-// Tavily & Celery Job Matcher
+// Job Matcher & Celery Worker Integration
 function initJobMatcher() {
   const matchBtn = document.getElementById("trigger-match-btn");
   const celeryBtn = document.getElementById("trigger-celery-btn");
   const jobsList = document.getElementById("jobs-results-container");
+  const banner = document.getElementById("task-notification-banner");
 
   matchBtn.addEventListener("click", async () => {
     matchBtn.disabled = true;
-    matchBtn.textContent = "Fetching live jobs...";
-    jobsList.innerHTML = `<div style="color:var(--text-dim);">Connecting to Tavily API...</div>`;
+    matchBtn.textContent = "Querying external jobs...";
+    jobsList.innerHTML = `<div style="color:var(--text-dim);">Connecting to job search service...</div>`;
 
     try {
       const res = await fetch(`${API_BASE}/jobs/match`, {
@@ -285,9 +281,14 @@ function initJobMatcher() {
       const json = await res.json();
       
       if (!res.ok) {
-        jobsList.innerHTML = `<div class="glass-card" style="border-color:var(--accent-amber); color:var(--accent-amber);">
-          Notice: ${json.detail || 'Set your TAVILY_API_KEY in .env to query live job boards directly.'}
-        </div>`;
+        jobsList.innerHTML = `
+          <div class="glass-card" style="border-left: 3px solid var(--accent-amber); padding:1.25rem;">
+            <div style="font-weight:600; color:var(--accent-amber); margin-bottom:0.25rem;">External Search Notice</div>
+            <div style="font-size:0.9rem; color:var(--text-muted);">
+              ${json.detail || "External job search provider requires a valid TAVILY_API_KEY in .env. Configure this key to enable live remote scraping."}
+            </div>
+          </div>
+        `;
         return;
       }
 
@@ -301,13 +302,13 @@ function initJobMatcher() {
         <div class="glass-card job-card">
           <div class="job-header">
             <div class="job-title">${job.title}</div>
-            <a href="${job.url}" target="_blank" rel="noopener" class="job-link">View Listing ↗</a>
+            <a href="${job.url}" target="_blank" rel="noopener" class="job-link">View Listing &rarr;</a>
           </div>
           <p class="job-snippet">${job.content}</p>
         </div>
       `).join("");
     } catch (err) {
-      jobsList.innerHTML = `<div style="color:var(--accent-rose);">Failed to connect to job search API.</div>`;
+      jobsList.innerHTML = `<div style="color:var(--accent-rose);">Failed to query job search API.</div>`;
     } finally {
       matchBtn.disabled = false;
       matchBtn.textContent = "Search Live Jobs";
@@ -316,7 +317,7 @@ function initJobMatcher() {
 
   celeryBtn.addEventListener("click", async () => {
     celeryBtn.disabled = true;
-    celeryBtn.textContent = "Queuing task...";
+    celeryBtn.textContent = "Dispatching...";
     try {
       const res = await fetch(`${API_BASE}/jobs/sync-task`, {
         method: "POST",
@@ -324,12 +325,37 @@ function initJobMatcher() {
         body: JSON.stringify({ max_results: 5 })
       });
       const data = await res.json();
-      alert(`Celery Background Worker Dispatched!\n\nTask ID: ${data.task_id}\nStatus: ${data.status}\nMessage: ${data.message}`);
+      
+      if (banner) {
+        banner.style.display = "block";
+        banner.innerHTML = `
+          <div class="glass-card" style="border-left: 3px solid var(--accent-emerald); padding:1rem 1.25rem;">
+            <div style="font-weight:600; color:var(--accent-emerald); margin-bottom:4px;">
+              Celery Background Task Dispatched
+            </div>
+            <div style="font-size:0.85rem; color:var(--text-muted);">
+              <strong>Task ID:</strong> <code>${data.task_id}</code> &nbsp;|&nbsp; 
+              <strong>Status:</strong> <span class="tag-badge" style="color:var(--accent-cyan);">${data.status}</span> &nbsp;|&nbsp;
+              ${data.message}
+            </div>
+          </div>
+        `;
+        setTimeout(() => {
+          if (banner) banner.style.display = "none";
+        }, 8000);
+      }
     } catch (err) {
-      alert("Error dispatching Celery task.");
+      if (banner) {
+        banner.style.display = "block";
+        banner.innerHTML = `
+          <div class="glass-card" style="border-left: 3px solid var(--accent-rose); padding:1rem 1.25rem;">
+            <div style="font-weight:600; color:var(--accent-rose);">Failed to dispatch background task.</div>
+          </div>
+        `;
+      }
     } finally {
       celeryBtn.disabled = false;
-      celeryBtn.textContent = "Queue to Celery (2h Worker)";
+      celeryBtn.textContent = "Dispatch Celery Task";
     }
   });
 }

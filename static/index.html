@@ -22,16 +22,16 @@
 
       <nav class="nav-tabs" role="tablist">
         <button id="tab-chat" class="tab-btn active" data-target="chat-view" role="tab">
-          <span>💬</span> AI Assistant
+          AI Assistant
         </button>
         <button id="tab-projects" class="tab-btn" data-target="projects-view" role="tab">
-          <span>💼</span> Projects
+          Projects
         </button>
         <button id="tab-skills" class="tab-btn" data-target="skills-view" role="tab">
-          <span>⚡</span> Skills & Experience
+          Skills & Experience
         </button>
         <button id="tab-jobs" class="tab-btn" data-target="jobs-view" role="tab">
-          <span>🎯</span> Job Matcher
+          Job Matcher
         </button>
       </nav>
 
@@ -51,32 +51,32 @@
         <!-- Sidebar -->
         <aside class="chat-sidebar">
           <div class="glass-card agent-profile">
-            <div class="agent-avatar">🤖</div>
-            <h2 class="agent-name">Portfolio AI Bot</h2>
-            <div class="agent-model-tag">LangGraph · Stateful Memory</div>
+            <div class="agent-avatar">AI</div>
+            <h2 class="agent-name">Portfolio Assistant</h2>
+            <div class="agent-model-tag">LangGraph Stateful Memory</div>
             <p style="font-size:0.85rem; color:var(--text-muted); margin-top:12px;">
-              Connected directly to MongoDB. Ask me anything about the developer's projects, technical stack, or background.
+              Connected directly to MongoDB. Query projects, technical stack, or background information in natural language.
             </p>
           </div>
 
           <div class="glass-card quick-prompts">
-            <h4>Quick Inquiries</h4>
+            <h4>Quick Queries</h4>
             <button class="prompt-chip" data-prompt="What featured projects has this developer built and what are their tech stacks?">
-              🚀 Featured Projects
+              Featured Projects
             </button>
             <button class="prompt-chip" data-prompt="What are the developer's core backend and database proficiencies?">
-              🛠️ Skills & Experience
+              Technical Skills
             </button>
             <button class="prompt-chip" data-prompt="Show me how Redis and MongoDB are used in this portfolio platform.">
-              💾 Database & Caching Architecture
+              Database & Caching Architecture
             </button>
             <button class="prompt-chip" data-prompt="Summarize the work history and past company roles.">
-              📜 Work History
+              Work History
             </button>
           </div>
 
           <div class="glass-card" style="font-size:0.8rem; color:var(--text-dim);">
-            <strong>Developer Note:</strong> Multi-turn conversations persist across questions via LangGraph's <code style="color:var(--accent-cyan);">MemorySaver</code>.
+            <strong>State Management:</strong> Conversations persist across turns via LangGraph's <code style="color:var(--accent-cyan);">MemorySaver</code> checkpointing.
           </div>
         </aside>
 
@@ -88,13 +88,13 @@
               <span style="font-weight:600; font-size:0.95rem;">Interactive Session</span>
             </div>
             <a href="/docs" target="_blank" rel="noopener" class="job-link" style="font-size:0.8rem;">
-              Swagger UI Docs ↗
+              Swagger API Documentation
             </a>
           </div>
 
           <div id="chat-messages" class="chat-messages">
             <div class="chat-bubble agent">
-              Hello! I am the <strong>NovaGates Portfolio AI Agent</strong>. I can query our backend database in real time to tell you about the candidate's skills, projects, and career milestones. How can I assist you today?
+              Hello. I am the <strong>NovaGates Portfolio Assistant</strong>. I query the backend database in real time to provide verified information regarding skills, projects, and work history. How can I assist you?
             </div>
           </div>
 
@@ -109,7 +109,6 @@
             >
             <button type="submit" id="send-btn" class="btn-primary">
               <span>Send</span>
-              <span>➤</span>
             </button>
           </form>
         </div>
@@ -121,7 +120,7 @@
       <div class="section-header">
         <div>
           <h2 class="section-title">Projects Showcase</h2>
-          <p class="section-desc">Live project catalog queried from MongoDB with caching via Redis.</p>
+          <p class="section-desc">Live project catalog queried from MongoDB with Redis caching.</p>
         </div>
         <div class="search-filter-box">
           <input 
@@ -175,13 +174,15 @@
         </div>
         <div style="display:flex; gap:10px;">
           <button id="trigger-match-btn" class="btn-primary">
-            🔍 Search Live Jobs
+            Search Live Jobs
           </button>
           <button id="trigger-celery-btn" class="btn-primary" style="background:linear-gradient(135deg, #10b981, #059669);">
-            ⚡ Queue to Celery (2h Worker)
+            Dispatch Celery Task
           </button>
         </div>
       </div>
+
+      <div id="task-notification-banner" style="display:none; margin-bottom:1.5rem;"></div>
 
       <div id="jobs-results-container">
         <div class="glass-card" style="text-align:center; padding: 3rem; color:var(--text-muted);">

@@ -8,6 +8,7 @@ from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import AIMessage
 from langchain_core.outputs import ChatGeneration, ChatResult
 from langchain_openai import ChatOpenAI
+from pydantic import SecretStr
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ def get_agent_llm() -> BaseChatModel:
         logger.info("Initializing Agent LLM with OpenAI gpt-4o-mini.")
         return ChatOpenAI(
             model="gpt-4o-mini",
-            api_key=openai_key,
+            api_key=SecretStr(openai_key),
             temperature=0.2,
         )
 
@@ -55,7 +56,7 @@ def get_agent_llm() -> BaseChatModel:
         logger.info("Initializing Agent LLM with Ollama Cloud (%s).", ollama_model)
         return ChatOpenAI(
             model=ollama_model,
-            api_key=ollama_key,
+            api_key=SecretStr(ollama_key),
             base_url=f"{ollama_base}/v1"
             if not ollama_base.endswith("/v1")
             else ollama_base,

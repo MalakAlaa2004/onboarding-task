@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import START, MessagesState, StateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
@@ -63,7 +64,7 @@ async def run_portfolio_agent(
     message: str, thread_id: str = "default"
 ) -> dict[str, Any]:
     """Executes a multi-turn conversation with memory using LangGraph."""
-    config = {"configurable": {"thread_id": thread_id}}
+    config: RunnableConfig = cast(RunnableConfig, {"configurable": {"thread_id": thread_id}})
     input_message = HumanMessage(content=message)
 
     result = await portfolio_agent_graph.ainvoke(

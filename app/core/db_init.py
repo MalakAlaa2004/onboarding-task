@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any, cast
 
 from beanie import init_beanie
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -12,7 +13,7 @@ from app.models.skill import Skill
 
 # Compatibility patch: Motor delegates to PyMongo client for append_metadata
 if not hasattr(AsyncIOMotorClient, "append_metadata"):
-    AsyncIOMotorClient.append_metadata = lambda self, *args, **kwargs: getattr(
+    AsyncIOMotorClient.append_metadata = lambda self, *args, **kwargs: getattr(  # pyright: ignore[reportAttributeAccessIssue]
         self.delegate, "append_metadata", lambda *a, **k: None
     )(*args, **kwargs)
 
@@ -35,7 +36,7 @@ class DatabaseManager:
         db = cls.client[target_db]
 
         await init_beanie(
-            database=db,
+            database=cast(Any, db),
             document_models=[
                 Project,
                 Skill,

@@ -8,6 +8,8 @@
     }
   },
   "python.analysis.typeCheckingMode": "basic",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.analysis.extraPaths": ["${workspaceFolder}"],
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true
 }

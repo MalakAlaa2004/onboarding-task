@@ -43,7 +43,11 @@ async def trigger_job_sync_task(request: JobMatchRequest | None = None):
     query = request.query if request else None
     max_results = request.max_results if request else 5
 
-    task = fetch_matching_jobs_task.delay(query=query, max_results=max_results)
+    from typing import Any, cast
+
+    task = cast(Any, fetch_matching_jobs_task).delay(
+        query=query, max_results=max_results
+    )
     return {
         "success": True,
         "task_id": task.id,
