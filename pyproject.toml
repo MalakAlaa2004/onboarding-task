@@ -1,0 +1,59 @@
+[project]
+name = "novagates-backend"
+version = "0.1.0"
+description = "NovaGates Backend & AI Developer Portfolio Stack"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "beanie>=1.27.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.6.0",
+    "redis>=5.2.0",
+    "httpx>=0.28.0",
+    "celery>=5.4.0",
+    "langgraph>=0.2.50",
+    "langchain-core>=0.3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.8.0",
+    "black>=24.10.0",
+    "mypy>=1.13.0",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+indent-width = 4
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # flake8-bugbear
+    "C4",   # flake8-comprehensions
+    "UP",   # pyupgrade
+    "SIM",  # flake8-simplify
+]
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+addopts = "-ra -q --tb=short"
+asyncio_mode = "auto"
+testpaths = ["tests", "deliverables"]
+python_files = ["test_*.py", "*_test.py"]
