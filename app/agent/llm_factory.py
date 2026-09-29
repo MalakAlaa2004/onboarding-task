@@ -35,6 +35,21 @@ class FallbackPortfolioLLM(BaseChatModel):
 
 def get_agent_llm() -> BaseChatModel:
     """Returns configured Chat LLM using OpenAI, Ollama Cloud, or fallback."""
+    ollama_key = os.environ.get("OLLAMA_API_KEY")
+    ollama_base = os.environ.get("OLLAMA_BASE_URL", "https://ollama.com")
+    ollama_model = os.environ.get("OLLAMA_MODEL", "gpt-oss:20b")
+
+    if ollama_key and not ollama_key.startswith("mock-"):
+        logger.info("Initializing Agent LLM with Ollama Cloud (%s).", ollama_model)
+        return ChatOpenAI(
+            model=ollama_model,
+            api_key=SecretStr(ollama_key),
+            base_url=f"{ollama_base}/v1"
+            if not ollama_base.endswith("/v1")
+            else ollama_base,
+            temperature=0.2,
+        )
+
     openai_key = os.environ.get("OPENAI_API_KEY")
     if (
         openai_key
@@ -45,21 +60,6 @@ def get_agent_llm() -> BaseChatModel:
         return ChatOpenAI(
             model="gpt-4o-mini",
             api_key=SecretStr(openai_key),
-            temperature=0.2,
-        )
-
-    ollama_key = os.environ.get("OLLAMA_API_KEY")
-    ollama_base = os.environ.get("OLLAMA_BASE_URL", "https://ollama.com")
-    ollama_model = os.environ.get("OLLAMA_MODEL", "gpt-oss:120b")
-
-    if ollama_key:
-        logger.info("Initializing Agent LLM with Ollama Cloud (%s).", ollama_model)
-        return ChatOpenAI(
-            model=ollama_model,
-            api_key=SecretStr(ollama_key),
-            base_url=f"{ollama_base}/v1"
-            if not ollama_base.endswith("/v1")
-            else ollama_base,
             temperature=0.2,
         )
 
