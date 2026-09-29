@@ -28,7 +28,7 @@ def check_tool(name: str, cmd: list[str]) -> dict:
 
 def main():
     print("=" * 60)
-    print(" NovaGates Backend & AI Developer — Day 1 Environment Audit ")
+    print(" NovaGates Backend & AI Developer - Day 1 Environment Audit ")
     print("=" * 60)
 
     checks = {
